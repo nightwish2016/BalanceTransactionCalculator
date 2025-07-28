@@ -1,9 +1,10 @@
 import sqlite3
+import os
 
 class SqlLiteUtil:
     def __init__(self):
         # self.conn = sqlite3.connect('C:\\Users\\kzhou\OneDrive - GREEN DOT CORPORATION\\Documents\\GitRepo\\MyCode\\AIWEB\\DB\\OpenAI.db')
-        self.conn = sqlite3.connect('/root/myai/DB/OpenAI.db')
+        self.conn = sqlite3.connect(os.getenv("DB_PATH"))
         # self.conn = sqlite3.connect('OpenAI.db')
         self.conn.row_factory = sqlite3.Row
         self.cursor = self.conn.cursor()
@@ -32,6 +33,10 @@ class SqlLiteUtil:
         # self.conn.close()
     def updateChatHistory(self,params):
         self.cursor.execute("update ChatHistory set chargestatus=3 where id in ({}) ".format(','.join('?'*len(params))),params)
+        # self.conn.commit()
+
+    def updateTtsHistory(self,params):
+        self.cursor.execute("update ttsHistory set chargestatus=3 where id in ({}) ".format(','.join('?'*len(params))),params)
         # self.conn.commit()
     
     def updateImageHistory(self,params):

@@ -26,6 +26,17 @@ def calculateTransactountAmountForPendingChargeRecords():
             join imageprice p on ch.model = p.model 
             and LOWER(ch.quality) = LOWER(p.quality ) 
             and Trim(ch.resolution) =TRIM(p.resolution)
+            where ch.chargestatus=1 
+
+            union
+            
+ select ch.userid,ch.id as historyId,ch.Model,
+            (p.inputPrice/1000000)*ch.PromptTokens+(p.outputPrice/1000000)*ch.CompletionTokens  as transactionAmount,
+            1 as transactionStatus,
+            ch.created,3 as consumeTransactionDetailTypekey
+            from ttsHistory ch
+            join ttsPrice p on ch.model = p.model 
+           
             where ch.chargestatus=1 ;
 
 
@@ -51,8 +62,10 @@ def addConsumeTransactiondetails(rows):
             db.insertConsumeTransactionDetail(params)
             if consumeTransactiondetailTypekey==1:
                 db.updateChatHistory((historyId,))
+            elif consumeTransactiondetailTypekey==2:
+                db.updateImageHistory((historyId,))
             else:
-                db.updateImageHistory((historyId,))                         
+                db.updateTtsHistory((historyId,))                         
             db.conn.commit()
         except sqlite3.Error as e:
             print('sqlite3.Error occurred:', e.args[0])
