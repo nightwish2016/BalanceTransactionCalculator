@@ -38,6 +38,10 @@ class SqlLiteUtil:
     def updateTtsHistory(self,params):
         self.cursor.execute("update ttsHistory set chargestatus=3 where id in ({}) ".format(','.join('?'*len(params))),params)
         # self.conn.commit()
+    def updateTranscriptionHistory(self,params):
+        self.cursor.execute("update transcriptionHistory set chargestatus=3 where id in ({}) ".format(','.join('?'*len(params))),params)
+        # self.conn.commit()
+     
     
     def updateImageHistory(self,params):
         self.cursor.execute("update imageHistory set chargestatus=3 where id in ({}) ".format(','.join('?'*len(params))),params)

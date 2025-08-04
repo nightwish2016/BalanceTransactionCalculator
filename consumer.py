@@ -37,7 +37,20 @@ def calculateTransactountAmountForPendingChargeRecords():
             from ttsHistory ch
             join ttsPrice p on ch.model = p.model 
            
+            where ch.chargestatus=1 
+            
+            union 
+
+            
+ select ch.userid,ch.id as historyId,ch.Model,
+          (p.price/60)*ch.duration  as transactionAmount,
+            1 as transactionStatus,
+            ch.created,4 as consumeTransactionDetailTypekey
+            from transcriptionHistory ch
+            join transcriptionPrice p on ch.model = p.model 
+           
             where ch.chargestatus=1 ;
+            
 
 
         """
@@ -64,8 +77,10 @@ def addConsumeTransactiondetails(rows):
                 db.updateChatHistory((historyId,))
             elif consumeTransactiondetailTypekey==2:
                 db.updateImageHistory((historyId,))
+            elif consumeTransactiondetailTypekey==3:
+                db.updateTtsHistory((historyId,))   
             else:
-                db.updateTtsHistory((historyId,))                         
+                db.updateTranscriptionHistory((historyId,))                          
             db.conn.commit()
         except sqlite3.Error as e:
             print('sqlite3.Error occurred:', e.args[0])
@@ -84,7 +99,7 @@ def getConsumeTransactionDetailsForChargeFee():
         FROM ConsumeTransactionDetail 
         where transactionStatus=1         
         GROUP BY userid
-        having SUM(transactionAmount) > 0.015 
+        having SUM(transactionAmount) > 0.00015 
           limit 10;
         """
     rows=db.query(query)
@@ -126,6 +141,8 @@ def getlevel(userid):
             select level from user where id={userid}
         """
     rows=db.query(query)
+    if len(rows) == 0:
+        return
     return rows[0]['level']
 
 def getCNYRates(userid):
