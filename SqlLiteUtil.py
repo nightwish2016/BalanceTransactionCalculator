@@ -1,5 +1,7 @@
 import sqlite3
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 class SqlLiteUtil:
     def __init__(self):
